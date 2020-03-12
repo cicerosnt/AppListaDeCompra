@@ -8,6 +8,7 @@ import android.view.View;
 import android.widget.EditText;
 
 import br.net.cicerosantos.compras2.R;
+import br.net.cicerosantos.compras2.model.Usuario;
 import br.net.cicerosantos.compras2.model.Validar;
 
 public class LoginActivity extends AppCompatActivity {
@@ -30,6 +31,7 @@ public class LoginActivity extends AppCompatActivity {
     public void onClickEntrar(View view){
         if (Validar.getVEmail(email)){
             if (Validar.getVCampo(senha)){
+                Usuario usuario = new Usuario();
 
             }else{
                 senha.requestFocus();

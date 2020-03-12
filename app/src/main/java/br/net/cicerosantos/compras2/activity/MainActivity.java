@@ -16,12 +16,16 @@ import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.miguelcatalan.materialsearchview.MaterialSearchView;
 
+import br.net.cicerosantos.compras2.Config.ConfigFirebase;
 import br.net.cicerosantos.compras2.R;
 import br.net.cicerosantos.compras2.model.Validar;
 
 public class MainActivity extends AppCompatActivity {
+
+    FirebaseAuth firebaseAuth = ConfigFirebase.getFirebaseAuth();
 
     MaterialSearchView searchView;
 
@@ -40,6 +44,9 @@ public class MainActivity extends AppCompatActivity {
 
     private void inicializaComponentes() {
         searchView = findViewById(R.id.search_view);
+
+
+        isLogado();
     }
 
     public void onClickLogin(View view){
@@ -48,6 +55,14 @@ public class MainActivity extends AppCompatActivity {
 
     public void onClickPerfil(View view){
         startActivity(new Intent(this, PerfilActivity.class));
+    }
+
+    private void isLogado() {
+        if (firebaseAuth.getCurrentUser() == null){
+            startActivity(new Intent(this, LoginActivity.class));
+            firebaseAuth.signOut();
+            finish();
+        }
     }
 
     private void addNovoItem(){
@@ -102,7 +117,9 @@ public class MainActivity extends AppCompatActivity {
                 addNovoItem();
                 break;
             case R.id.perfil:
-
+                Intent intent = new Intent(this, PerfilActivity.class);
+                intent.putExtra("editar", "editar");
+                startActivity(intent);
                 break;
             case R.id.exportar:
 
