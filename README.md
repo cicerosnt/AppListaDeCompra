@@ -2,4 +2,4 @@
 
 ## Sample
 
-<img src="http://cicerosantos.net.br/video/compras2.webp"/>
+<img src="http://cicerosantos.net.br/video/compras2.gif"/>
