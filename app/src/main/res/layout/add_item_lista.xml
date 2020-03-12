@@ -33,6 +33,14 @@
                 android:layout_height="wrap_content"
                 android:hint="Informe o item" />
 
+            <Button
+                android:id="@+id/btnSalvar"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:layout_weight="1"
+                android:text="Salvar" />
+
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
@@ -42,14 +50,6 @@
             android:layout_marginTop="10dp"
             android:layout_weight="1"
             android:text="Cancelar" />
-
-        <Button
-            android:id="@+id/btnSalvar"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            android:layout_weight="1"
-            android:text="Salvar" />
 
     </LinearLayout>
 

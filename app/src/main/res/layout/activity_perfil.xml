@@ -14,22 +14,20 @@
         android:layout_margin="20dp"
         android:orientation="vertical">
 
-
         <ImageView
-            android:id="@+id/imageView"
+            android:id="@+id/imgUsuario"
             android:layout_width="60dp"
             android:layout_height="60dp"
             android:layout_gravity="center_horizontal"
-            app:srcCompat="@drawable/ic_pessoa_cinza" />
+            android:layout_margin="20dp"
+            android:src="@drawable/ic_pessoa_cinza"/>
 
         <TextView
-            android:id="@+id/textView"
-            android:layout_width="match_parent"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginTop="15dp"
-            android:layout_marginBottom="15dp"
-            android:gravity="center"
-            android:text="Cadastre-se é Gratis!!!"
+            android:layout_gravity="center_horizontal"
+            android:layout_marginBottom="20dp"
+            android:text="Cadastre-se! é grates."
             android:textSize="18sp"
             android:textStyle="bold" />
 

@@ -42,6 +42,14 @@ public class MainActivity extends AppCompatActivity {
         searchView = findViewById(R.id.search_view);
     }
 
+    public void onClickLogin(View view){
+        startActivity(new Intent(this, LoginActivity.class));
+    }
+
+    public void onClickPerfil(View view){
+        startActivity(new Intent(this, PerfilActivity.class));
+    }
+
     private void addNovoItem(){
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.add_item_lista);
