@@ -90,7 +90,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getRecuperaItens() {
-        //Alerta.getProgesso("Carregando itens...",  this);
+        Alerta.getProgesso("Carregando itens...",  this);
         final DatabaseReference itensRef = databaseReference.child("shopping_list").child(firebaseAuth.getUid());
         itensRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -102,14 +102,14 @@ public class MainActivity extends AppCompatActivity {
                     listaItens.add(item);
                 }
 
-                //Alerta.progressDialog.dismiss();
+                Alerta.progressDialog.dismiss();
                 getConfigRecycler(listaItens);
 
             }
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                //Alerta.progressDialog.dismiss();
+                Alerta.progressDialog.dismiss();
             }
         });
     }
