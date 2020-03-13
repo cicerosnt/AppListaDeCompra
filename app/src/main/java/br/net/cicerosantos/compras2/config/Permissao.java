@@ -1,4 +1,4 @@
-package br.net.cicerosantos.compras2.Config;
+package br.net.cicerosantos.compras2.config;
 
 import android.app.Activity;
 import android.content.pm.PackageManager;

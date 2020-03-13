@@ -1,6 +1,4 @@
-package br.net.cicerosantos.compras2.Config;
-
-import android.app.Activity;
+package br.net.cicerosantos.compras2.config;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;

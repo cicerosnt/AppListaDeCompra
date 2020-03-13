@@ -2,6 +2,8 @@ package br.net.cicerosantos.compras2.model;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.net.Uri;
+import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -13,8 +15,9 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthInvalidCredentialsException;
 import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.auth.FirebaseAuthWeakPasswordException;
+import com.google.firebase.auth.UserProfileChangeRequest;
 
-import br.net.cicerosantos.compras2.Config.ConfigFirebase;
+import br.net.cicerosantos.compras2.config.ConfigFirebase;
 import br.net.cicerosantos.compras2.activity.LoginActivity;
 import br.net.cicerosantos.compras2.helper.Alerta;
 
@@ -26,7 +29,7 @@ public class Usuario {
     public Usuario() {
     }
 
-    public static void salvar(Usuario usuario, final Activity activity){
+    public static void getSalvarUsuario(final Usuario usuario, final Activity activity){
         Alerta.getProgesso("Aguarde...", activity);
         try {
             firebaseAuth.createUserWithEmailAndPassword(
@@ -36,11 +39,14 @@ public class Usuario {
                 @Override
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()){
+
+                        getAtulizaNome(usuario.getNome(), activity);
                         Alerta.progressDialog.dismiss();
                         Toast.makeText(activity, "Usuario cadastrado com sucesso!", Toast.LENGTH_SHORT).show();
                         activity.startActivity(new Intent(activity, LoginActivity.class));
                         firebaseAuth.signOut();
                         activity.finish();
+
                     }else{
                         String  result = "";
                         try {
@@ -61,6 +67,51 @@ public class Usuario {
             });
         }catch (Exception e){
             e.printStackTrace();
+        }
+    }
+
+    public static void getAtulizaNome(final String nome, final Activity activity){
+
+        firebaseAuth = ConfigFirebase.getFirebaseAuth();
+
+        try {
+            UserProfileChangeRequest perfil = new UserProfileChangeRequest.Builder()
+                    .setDisplayName( nome )
+                    .build();
+            firebaseAuth.getCurrentUser().updateProfile( perfil ).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if ( task.isSuccessful() ){
+                        Alerta.getToast("Nome atualizao!", activity);
+                    }else{
+                        Alerta.getToast("Erro ao atualizar nome", activity);
+                    }
+                }
+            });
+        }catch (Exception e){
+            e.printStackTrace();
+            Log.d("tet","tet:" + e.getMessage().toString());
+        }
+    }
+
+    public static boolean getAtualizaFotoUsuario(Uri url){
+        try {
+            UserProfileChangeRequest profile = new UserProfileChangeRequest
+                    .Builder()
+                    .setPhotoUri( url )
+                    .build();
+            ConfigFirebase.getFirebaseAuth().getCurrentUser().updateProfile( profile ).addOnCompleteListener(new OnCompleteListener<Void>() {
+                @Override
+                public void onComplete(@NonNull Task<Void> task) {
+                    if (task.isSuccessful()){
+
+                    }
+                }
+            });
+            return true;
+        }catch (Exception e){
+            e.printStackTrace();
+            return false;
         }
     }
 

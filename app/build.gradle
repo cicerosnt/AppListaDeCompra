@@ -43,4 +43,10 @@ dependencies {
 
     //MaterialSearchView
     implementation 'com.miguelcatalan:materialsearchview:1.4.0'
+
+    //imagem circular
+    implementation 'de.hdodenhof:circleimageview:3.0.1'
+
+    //biblioteca picasso para ler url
+    implementation 'com.squareup.picasso:picasso:2.5.2'
 }
