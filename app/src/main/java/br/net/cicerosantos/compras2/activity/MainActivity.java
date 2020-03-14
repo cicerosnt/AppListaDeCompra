@@ -76,6 +76,15 @@ public class MainActivity extends AppCompatActivity {
         searchView = findViewById(R.id.search_view);
         recyclerView = findViewById(R.id.recyclerView);
         swipToRefresh = findViewById(R.id.swipToRefresh);
+        swipToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                search = false;
+                getRecuperaItens();
+                //swipToRefresh.setRefreshing(false);
+            }
+        });
+        swipToRefresh.setRefreshing(true);
         isLogado();
         getConfiguraPesquisa();
     }
@@ -110,23 +119,6 @@ public class MainActivity extends AppCompatActivity {
         getConfigRecycler(listaItensPesquisa);
         getConfigSwaip();
 
-
-        swipToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                new Handler().postDelayed(new Runnable() {
-
-                    @Override
-                    public void run() {
-                        getRecuperaItens();
-                        swipToRefresh.setRefreshing(false);
-                    }
-
-                },3000);
-            }
-        });
-
-
     }
 
     private void isLogado() {
@@ -141,8 +133,6 @@ public class MainActivity extends AppCompatActivity {
 
     private void getRecuperaItens() {
 
-        Alerta.getProgesso("Carregando itens...",  this);
-
         final DatabaseReference itensRef = databaseReference.child("compras_list").child(firebaseAuth.getUid());
         itensRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -154,7 +144,7 @@ public class MainActivity extends AppCompatActivity {
                     listaItens.add(item);
                 }
 
-                Alerta.progressDialog.dismiss();
+                swipToRefresh.setRefreshing(false);
                 if (listaItens != null){
                     getConfigRecycler(listaItens);
                 }
@@ -163,7 +153,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
-                Alerta.progressDialog.dismiss();
+                swipToRefresh.setRefreshing(false);
             }
         });
     }
