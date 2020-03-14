@@ -3,9 +3,11 @@ package br.net.cicerosantos.compras2.activity;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.view.MotionEventCompat;
 import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.app.AlertDialog;
 import android.app.Dialog;
@@ -14,8 +16,12 @@ import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.os.Handler;
+import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -51,6 +57,7 @@ public class MainActivity extends AppCompatActivity {
 
     MaterialSearchView searchView;
     RecyclerView recyclerView;
+    SwipeRefreshLayout swipToRefresh;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -68,15 +75,58 @@ public class MainActivity extends AppCompatActivity {
     private void inicializaComponentes() {
         searchView = findViewById(R.id.search_view);
         recyclerView = findViewById(R.id.recyclerView);
+        swipToRefresh = findViewById(R.id.swipToRefresh);
         isLogado();
+        getConfiguraPesquisa();
     }
 
-    public void onClickLogin(View view){
-        startActivity(new Intent(this, LoginActivity.class));
+    private void getConfiguraPesquisa() {
+        searchView.setOnQueryTextListener(new MaterialSearchView.OnQueryTextListener() {
+            @Override
+            public boolean onQueryTextSubmit(String query) {
+
+                return false;
+            }
+
+            @Override
+            public boolean onQueryTextChange(String newText) {
+                if (newText != null && !newText.isEmpty()){
+                    getPesquisaLista(newText.toLowerCase());
+                }
+                return false;
+            }
+        });
     }
 
-    public void onClickPerfil(View view){
-        startActivity(new Intent(this, PerfilActivity.class));
+    private void getPesquisaLista(String query) {
+        search = true;
+        listaItensPesquisa.clear();
+        for (Item item : listaItens){
+            String descItem = item.getDescricao().toLowerCase();
+            if (descItem.contains(query)){
+                listaItensPesquisa.add(item);
+            }
+        }
+        getConfigRecycler(listaItensPesquisa);
+        getConfigSwaip();
+
+
+        swipToRefresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                new Handler().postDelayed(new Runnable() {
+
+                    @Override
+                    public void run() {
+                        getRecuperaItens();
+                        swipToRefresh.setRefreshing(false);
+                    }
+
+                },3000);
+            }
+        });
+
+
     }
 
     private void isLogado() {
@@ -90,8 +140,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void getRecuperaItens() {
+
         Alerta.getProgesso("Carregando itens...",  this);
-        final DatabaseReference itensRef = databaseReference.child("shopping_list").child(firebaseAuth.getUid());
+
+        final DatabaseReference itensRef = databaseReference.child("compras_list").child(firebaseAuth.getUid());
         itensRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
@@ -103,7 +155,9 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 Alerta.progressDialog.dismiss();
-                getConfigRecycler(listaItens);
+                if (listaItens != null){
+                    getConfigRecycler(listaItens);
+                }
 
             }
 
@@ -142,7 +196,6 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public boolean onMove(RecyclerView recyclerView, RecyclerView.ViewHolder viewHolder, RecyclerView.ViewHolder target) {
-
                 return false;
             }
 
@@ -160,7 +213,7 @@ public class MainActivity extends AppCompatActivity {
         AlertDialog.Builder dialog = new AlertDialog.Builder(this);
         dialog.setTitle("Êeepa!");
         dialog.setMessage("Deseja mesmo excluir este item?");
-        dialog.setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+        dialog.setPositiveButton("Sim", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
 
@@ -173,15 +226,15 @@ public class MainActivity extends AppCompatActivity {
                 }
 
                 if (item.getDeletarItem(item.getId())){
-                    Alerta.getToast("Item deleted succesfully!", MainActivity.this);
+                    Alerta.getToast("Item deletado com sucesso!", MainActivity.this);
                     getRecuperaItens();
                 }else {
-                    Alerta.getToast("Error deleted the item!", MainActivity.this);
+                    Alerta.getToast("Erro ao deletar o item!", MainActivity.this);
                     adapterItem.notifyItemRemoved( position );
                 }
             }
         });
-        dialog.setNegativeButton("No", new DialogInterface.OnClickListener() {
+        dialog.setNegativeButton("Não", new DialogInterface.OnClickListener() {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 dialog.dismiss();
@@ -193,7 +246,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void addNovoItem(){
+    private void getAdicionarNovoItem(){
         final Dialog dialog = new Dialog(this);
         dialog.setContentView(R.layout.add_item_lista);
         dialog.setCancelable(false);
@@ -246,7 +299,7 @@ public class MainActivity extends AppCompatActivity {
             case R.id.search_view:
                 break;
             case R.id.novoItem:
-                addNovoItem();
+                getAdicionarNovoItem();
                 break;
             case R.id.perfil:
                 Intent intent = new Intent(this, PerfilActivity.class);
@@ -266,4 +319,7 @@ public class MainActivity extends AppCompatActivity {
         }
         return super.onContextItemSelected(item);
     }
+
+
+
 }

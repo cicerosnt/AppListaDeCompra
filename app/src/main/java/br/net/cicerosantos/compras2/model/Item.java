@@ -14,7 +14,7 @@ public class Item {
     }
 
     public static void getSalvarItem(Item item) {
-        databaseReference.child("shopping_list")
+        databaseReference.child("compras_list")
                 .child(item.getId())
                 .push()
                 .setValue(item);
@@ -22,7 +22,7 @@ public class Item {
 
     public static boolean getDeletarItem(String id){
         try {
-            databaseReference.child("shopping_list")
+            databaseReference.child("compras_list")
                     .child( firebaseAuth.getCurrentUser().getUid())
                     .child( id ).removeValue();
             return true;
